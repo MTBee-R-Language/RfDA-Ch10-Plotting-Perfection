@@ -1,0 +1,303 @@
+
+R version 4.3.3 (2024-02-29) -- "Angel Food Cake"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Workspace loaded from ~/Documents/Programming/R for Data Analysis/10.Plotting.Perfection/.RData]
+
+> source("~/Documents/Programming/R for Data Analysis/10.Plotting.Perfection/10.01.MultiplePlots.R")
+RStudio Community is a great place to get help:
+https://forum.posit.co/c/tidyverse
+> # P.166 - Loading the data...
+>   frame <- read.csv( "DataSet-Hurricanes.csv" )
+>   head( frame , n = 8 )
+      Name Year WindMPH AffectedStates Deaths Sex
+1     Easy 1950     120             FL      2   F
+2     King 1950     130             FL      4   M
+3     Able 1952      85             SC      3   M
+4  Barbara 1953      85             NC      1   F
+5 Florence 1953      85             FL      0   F
+6    Carol 1954     120    NC,NY,CT,RI     60   F
+7     Edna 1954     120          MA,ME     20   F
+8    Hazel 1954     145       SC,NC,MD     20   F
+  DamageMillions
+1             32
+2            275
+3             25
+4              9
+5              2
+6           4051
+7            352
+8           2473
+>   library( ggplot2 )
+RStudio Community is a great place to get help:
+https://forum.posit.co/c/tidyverse
+> #
+>   label_object <-
++     labs ( title = "US Atlantic  Hurricanes"
++          , subtitle = "1950-2012"
++          , x = "Event Year"
++          , y = "Damage $ Millions"
++          , caption = "Source: Wikipedia | rpt:001 ~ loading the data"
++          )
+> #
+>   ggplot( frame
++         , aes ( x = Year
++               , y = DamageMillions
++               , size = DamageMillions
++               , color = WindMPH
++               )
++         ) +
++     geom_point( ) +
++     label_object # Add this line to include the label.
+> #-------------------------------------------------------------
+> # P.168 - Retaining objects...
+>   damage_plot <-
++     ggplot  ( frame
++             , aes ( x = Year
++                   , y = DamageMillions
++ #                  , size = DamageMillions # source flagged...
++                   , color = WindMPH
++                   )
++             )
+> #
+>   damage_plot +
++     geom_point( )+
++       labs(caption = "Source: Wikipedia | rpt:002 ~ retaining objects" )
+> #--- Include the next line in your selection to add lines.
+>   damage_plot +
++     geom_point( ) +
++     geom_line( linewidth = 0.5 ) +
++       labs(caption = "Source: Wikipedia | rpt:003 ~ add a line" )
+> #------------------------------------------------------------
+> # P.170 - Overriding labels...
+>   damage_plot +
++     ggtitle( "US Atlantic Hurricanes" ) +
++     xlab( "Event Year" ) +
++     ylab( "Damage $ Millions" ) +
++     geom_point( ) +
++     geom_line( linewidth = 0.5 )+
++       labs(caption = "Source: Wikipedia | rpt:004 ~ overriding labels" )
+> #--- Include the next lines in your selection for an object.
+>   damage_plot +
++     label_object +
++     geom_point( ) +
++     geom_line( linewidth = 0.5 )+
++       labs(caption = "Source: Wikipedia | rpt:005 ~ overriding labels" )
+> #------------------------------------------------------------
+> # P.172 - Adding fonts...
+> # windowsFonts( )
+> # install.packages( "extrafont" , dependencies = TRUE )
+> # font_import( prompt = FALSE )
+> # loadfonts( device = "win" )
+> # length( windowsFonts( )  )
+> # ^
+> # \
+> # +------ these don't work on my Linuxmint system
+> #------------------------------------------------------------
+> # P.172 - Adding a theme...
+>   theme_object <-
++     theme ( plot.title =
++               element_text( color = "Red"
++                           , family = "Wide Latin"
++                           )
++           , plot.subtitle =
++               element_text( color = "Red"
++                           )
++           , axis.title.x =
++               element_text( color = "Red"
++                           , face = "bold"
++                           )
++           , axis.title.y =
++               element_text( color = "Red"
++                           , face = "bold"
++                           )
++           , plot.caption =
++               element_text( color = "Black"
++                           , face = "italic"
++                           )
++           , legend.background =
++               element_rect( color = "Gray"
++                           )
++           )
+> #
+>   damage_plot +
++     label_object +
++     geom_point( ) +
++     geom_line( linewidth = 0.5 ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:006 ~ adding a theme" )
+> #------------------------------------------------------------
+> #P.175 - Comparing boxes (Boxplot)...
+>   gender_plot <-
++     ggplot  ( frame
++             , aes  ( x = Sex
++                    , y = Deaths
++                    , color = Sex
++                    )
++             #, size = 3 #? # source flagged...
++             )
+>       gender_plot +
++       label_object +
++       xlab( "Gender" ) +
++       ylab( "Number of Fatalities" ) +
++       geom_jitter( ) +
++       geom_boxplot( alpha = 0.5 ) + ylim( 10 , 200 ) +
++       theme_object+
++         labs(caption = "Source: Wikipedia | rpt:007 ~ comparing boxes" )
+Warning messages:
+1: Removed 61 rows containing non-finite outside the scale
+range (`stat_boxplot()`). 
+2: Removed 62 rows containing missing values or values outside
+the scale range (`geom_point()`). 
+> #------------------------------------------------------------
+> # P.176 - Identifying extremes...
+>   fatal_plot <-
++     ggplot  ( frame
++             , aes   ( x = Year
++                     , y = Deaths
++                     )
++             )
+> #
+>   fatal_plot +
++     label_object +
++     ylab( "Number of Fatalities" ) +
++     geom_point( aes( color = WindMPH )  ) +
++ #   geom_text( aes(label = Name )  ) +
++     geom_text( aes( label =
++                       ifelse( Deaths > 180
++                             , Name
++                             , ""
++                             )
++                   )
++             , angle = 45
++             , hjust = 1.1
++             ) +
++     geom_smooth( ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:008 ~ identifying extremes" )
+`geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+> #------------------------------------------------------------
+> # P.178 - Limiting focus...
+>   windspeed_plot <-
++     ggplot  ( frame
++             , aes ( x = Year
++                   , y = Deaths
++                   )
++             )
+> #
+>   windspeed_plot +
++     ylab( "Number of Fatalities" ) +
++     geom_point  ( aes( color = WindMPH )
++                 , size = 10
++                 , shape = 17
++                 ) +
++     label_object +
++     xlim( 1980 , 2000 ) +
++     ylim( 0 , 65 ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:009 ~ limiting focus" )
+Warning message:
+Removed 64 rows containing missing values or values outside
+the scale range (`geom_point()`). 
+> #------------------------------------------------------------
+> # P.179 - Zooming focus...
+>   windspeed_plot +
++     geom_point ( aes( color = WindMPH )
++                , size = 10
++                , shape = 17
++                ) +
++     label_object +
++     ylab( "Number of Fatalities" ) +
++     xlim( 1980 , 2000 ) +
++     ylim( 0 , 65 ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:010 ~ zooming focus" )
+Warning message:
+Removed 64 rows containing missing values or values outside
+the scale range (`geom_point()`). 
+> #
+>   strike_plot <-
++     ggplot  ( frame
++             , aes ( x = Year
++                   , fill = Sex
++                   )
++             )
+> #
+>   strike_plot +
++     label_object +
++     ylab( "Number of Strikes" ) +
++     geom_bar( ) +
++     coord_cartesian( xlim = c( 1980 , 2000 )  ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:011 ~ coordinates" )
+> #------------------------------------------------------------
+> # P.180 - Displaying facets...
+>   frame.tx <-
++     frame[ grep( "TX" , frame$AffectedStates ) , ]
+> #
+>   texas_plot <-
++     ggplot  ( frame.tx
++             , aes  ( x = Year
++                    , y = DamageMillions
++                    , size = Deaths
++                    , color = AffectedStates
++                    )
++             )
+> #
+>   texas_plot +
++     label_object +
++     geom_point( aes( size = Deaths )  ) +
++     facet_grid( AffectedStates~. ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:012 ~ displaying facets")
+> #------------------------------------------------------------
+> # P.181 - Displaying facets (cont'd)...
+>   frame.fl <-
++     frame[ grep( "FL", frame$AffectedStates ) , ]
+> #
+>   florida_plot <-
++     ggplot  ( frame.fl
++             , aes(x = Year )
++             )
+> #
+>   florida_plot +
++     label_object +
++     ylab( "Number of Strikes in Florida" ) +
++     geom_histogram( aes ( fill = AffectedStates )
++                   , color = "Black"
++                   , bins = 20
++                   ) +
++     theme_object+
++       labs(caption = "Source: Wikipedia | rpt:013 ~ displaying facets (cont'd)" )
+> #------------------------------------------------------------
+> # Cleanup
+>   detach( package:ggplot2 )
+>   rm( damage_plot
++       ,fatal_plot
++       ,florida_plot
++       ,frame
++       ,frame.fl
++       ,frame.tx
++       ,gender_plot
++       ,label_object
++       ,strike_plot
++       ,texas_plot
++       ,theme_object
++       ,windspeed_plot )
+> #--End--------------------------------------------------------
+> 
